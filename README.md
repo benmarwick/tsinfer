@@ -6,8 +6,17 @@ Infer population size and selection coefficient from time-series allele-frequenc
 ## Requirements
   * OCaml langugage compiler: http://ocaml.org/
   * GNU Scientific Library (GSL): http://www.gnu.org/software/gsl/
-  * GSL Interface for OCaml language: http://oandrieu.nerim.net/ocaml/
+  * GSL Interface for OCaml language: https://github.com/mmottl/gsl-ocaml 
+  
+On Ubuntu these can be installed with:
 
+```
+sudo apt-get update
+sudo apt-get install ocaml opam
+sudo apt-get install libgsl0-dev
+eval $(opam config env)
+opam install gsl
+```
 
 ## Installation
 Untar the archive into the desired directory:
