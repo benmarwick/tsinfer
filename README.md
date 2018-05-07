@@ -16,6 +16,7 @@ sudo apt-get install ocaml opam
 sudo apt-get install libgsl0-dev
 eval $(opam config env)
 opam install gsl
+opam info gsl
 ```
 
 ## Installation
