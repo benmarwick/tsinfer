@@ -12,11 +12,94 @@ On Ubuntu these can be installed with:
 
 ```
 sudo apt-get update
-sudo apt-get install ocaml opam
-sudo apt-get install libgsl0-dev
-eval $(opam config env)
-opam install gsl
-opam info gsl
+
+
+$ sudo add-apt-repository ppa:avsm/ppa
+$ sudo apt-get update
+$ sudo apt-get install curl build-essential m4 ocaml opam -y
+
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+build-essential is already the newest version (12.4ubuntu1).
+build-essential set to manually installed.
+m4 is already the newest version (1.4.18-1).
+ocaml is already the newest version (4.04.0-2ubuntu4).
+opam is already the newest version (1.2.2-6).
+curl is already the newest version (7.55.1-1ubuntu2.4).
+
+$ sudo apt-get install libgsl-dev gsl-bin libocamlgsl-ocaml-dev -y
+
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+libgsl-dev is already the newest version (2.4+dfsg-6).
+gsl-bin is already the newest version (2.4+dfsg-6).
+libocamlgsl-ocaml-dev is already the newest version (1.19.1-2build1).
+
+$ opam install -y batteries jbuilder gsl lacaml opam-installer
+
+[NOTE] Package batteries is already installed (current version is 2.8.0).
+[NOTE] Package jbuilder is already installed (current version is
+                                              1.0+beta19.1).
+[NOTE] Package gsl is already installed (current version is 1.21.0).
+[NOTE] Package lacaml is already installed (current version is 11.0.0).
+[NOTE] Package opam-installer is already installed (current version is
+                                                    2.0.0~rc).
+
+$ opam info gsl
+
+package: gsl
+version: 1.21.0
+repository: default
+upstream-url: https://github.com/mmottl/gsl-ocaml/releases/download/1.21.0/gsl-1.21.0.tbz
+upstream-kind: http
+upstream-checksum: a118387c7aa9f9e4dfa8bd0410ad2458
+homepage: https://mmottl.github.io/gsl-ocaml
+bug-reports: https://github.com/mmottl/gsl-ocaml/issues
+dev-repo: https://github.com/mmottl/gsl-ocaml.git
+author: Olivier Andrieu <oandrieu@gmail.com>, Markus Mottl <markus.mottl@gmail.com>
+  license: GPL-3+
+  doc: https://mmottl.github.io/gsl-ocaml/api
+depends: conf-gsl & conf-pkg-config & base & stdio & configurator & jbuilder >= 1.0+beta10
+installed-version: 1.21.0 [“tezos” system]
+available-versions: 1.18.5, 1.19.1, 1.19.3, 1.20.0, 1.20.2, 1.21.0
+description: GSL - Bindings to the GNU Scientific Library
+
+gsl-ocaml interfaces the GSL (GNU Scientific Library), providing many of the
+most frequently used functions for scientific computation including algorithms
+for optimization, differential equations, statistics, random number generation,
+linear algebra, etc.
+
+$ git clone https://github.com/mnewberry/tsinfer   
+$ cd tsinfer
+$ eval $(opam config env)
+$ make all
+
+make hash2.cmo
+make[1]: Entering directory '/home/osboxes/tsinfer'
+make[1]: 'hash2.cmo' is up to date.
+make[1]: Leaving directory '/home/osboxes/tsinfer'
+make aux.cmo
+make[1]: Entering directory '/home/osboxes/tsinfer'
+make[1]: 'aux.cmo' is up to date.
+make[1]: Leaving directory '/home/osboxes/tsinfer'
+make io.cmo
+make[1]: Entering directory '/home/osboxes/tsinfer'
+make[1]: 'io.cmo' is up to date.
+make[1]: Leaving directory '/home/osboxes/tsinfer'
+make tsinfer
+make[1]: Entering directory '/home/osboxes/tsinfer'
+ocamlopt -o tsinfer -I /usr/local/lib/ocaml/ocamlgsl/ bigarray.cmxa gsl.cmxa str.cmxa unix.cmxa nums.cmxa hash2.cmx aux.cmx io.cmx tsinfer.ml
+File "tsinfer.ml", line 122, characters 4-29:
+  Error: Unbound module Gsl
+Makefile:35: recipe for target 'tsinfer' failed
+make[1]: *** [tsinfer] Error 2
+make[1]: Leaving directory '/home/osboxes/tsinfer'
+Makefile:38: recipe for target 'all' failed
+make: *** [all] Error 2
+
+
 ```
 
 ## Installation
