@@ -1,6 +1,8 @@
 # TSINFER
 
-Infer population size and selection coefficient from time-series allele-frequency data
+Infer population size and selection coefficient from time-series allele-frequency data. 
+
+This is a fork of the original library by [Sergey Kryazhimskiy](https://github.com/skryazhi), via the fork by [Mitchell Newberry](https://github.com/mnewberry). This fork has a more detailed README to make it easier to install, and a minor change to the Makefile. No other files have been changed from the original.
 
 
 ## Requirements
