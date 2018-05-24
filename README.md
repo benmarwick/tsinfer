@@ -11,9 +11,6 @@ Infer population size and selection coefficient from time-series allele-frequenc
 On Ubuntu these can be installed with:
 
 ```
-sudo apt-get update
-
-
 $ sudo add-apt-repository ppa:avsm/ppa
 $ sudo apt-get update
 $ sudo apt-get install curl build-essential m4 ocaml opam -y
@@ -70,12 +67,18 @@ gsl-ocaml interfaces the GSL (GNU Scientific Library), providing many of the
 most frequently used functions for scientific computation including algorithms
 for optimization, differential equations, statistics, random number generation,
 linear algebra, etc.
-
-$ git clone https://github.com/mnewberry/tsinfer   
+```
+Now that we have the pre-requisites installed, we can get tsinfer:
+```
+$ git clone https://github.com/benmarwick/tsinfer   
 $ cd tsinfer
 $ eval $(opam config env)
 $ make all
 
+```
+
+If your output from `make all` looks like this:
+```
 make hash2.cmo
 make[1]: Entering directory '/home/osboxes/tsinfer'
 make[1]: 'hash2.cmo' is up to date.
@@ -98,23 +101,111 @@ make[1]: *** [tsinfer] Error 2
 make[1]: Leaving directory '/home/osboxes/tsinfer'
 Makefile:38: recipe for target 'all' failed
 make: *** [all] Error 2
+```
 
+Then there is a problem with the makefile finding GSL (thanks to [Sergey Kryazhimskiy](https://github.com/skryazhi) for trouble-shooting this). We can fix this by locating GSL with
+
+```
+sudo find . -name "gsl.cmxa"
+```
+
+Which should return several paths, on my computer I got `./usr/lib/ocaml/gsl/gsl.cmxa`. We then update this line of the Makefile:
+
+```
+GSLDIR = -I /usr/local/lib/ocaml/ocamlgsl/
+```
+to point to the correct location of GSL that you determined with the `find` command, like this:
+
+```
+GSLDIR = -I /usr/lib/ocaml/gsl
+```
+and then we save the changes to the makefile, and run `make all` again, and if it works, the output should be something like this:
+
+```
+$ make all
+make hash2.cmo
+make[1]: Entering directory '/home/osboxes/tsinfer'
+make[1]: 'hash2.cmo' is up to date.
+make[1]: Leaving directory '/home/osboxes/tsinfer'
+make aux.cmo
+make[1]: Entering directory '/home/osboxes/tsinfer'
+make[1]: 'aux.cmo' is up to date.
+make[1]: Leaving directory '/home/osboxes/tsinfer'
+make io.cmo
+make[1]: Entering directory '/home/osboxes/tsinfer'
+make[1]: 'io.cmo' is up to date.
+make[1]: Leaving directory '/home/osboxes/tsinfer'
+make tsinfer
+make[1]: Entering directory '/home/osboxes/tsinfer'
+ocamlopt -o tsinfer -I /usr/lib/ocaml/gsl bigarray.cmxa gsl.cmxa str.cmxa unix.cmxa nums.cmxa hash2.cmx aux.cmx io.cmx tsinfer.ml
+File "tsinfer.ml", line 266, characters 66-79:
+Warning 16: this optional argument cannot be erased.
+File "tsinfer.ml", line 344, characters 93-106:
+Warning 16: this optional argument cannot be erased.
+File "tsinfer.ml", line 488, characters 26-130:
+Warning 10: this expression should have type unit.
+File "tsinfer.ml", line 1356, characters 14-284:
+Warning 8: this pattern-matching is not exhaustive.
+Here is an example of a case that is not matched:
+""
+File "tsinfer.ml", line 1470, characters 7-17:
+Warning 8: this pattern-matching is not exhaustive.
+Here is an example of a case that is not matched:
+(_::_::_::_|_::[]|[])
+File "tsinfer.ml", line 1479, characters 7-17:
+Warning 8: this pattern-matching is not exhaustive.
+Here is an example of a case that is not matched:
+(_::_::_::_|_::[]|[])
+File "tsinfer.ml", line 1683, characters 29-923:
+Warning 8: this pattern-matching is not exhaustive.
+Here is an example of a case that is not matched:
+[|  |]
+File "tsinfer.ml", line 1728, characters 8-11:
+Warning 26: unused variable rng.
+make[1]: Leaving directory '/home/osboxes/tsinfer'
+```
+
+Now we can test the installation to see if it can return a result. We can use the built-in example data like this:
+
+```
+./tsinfer examples/test.in
+```
+
+And the output is:
+
+```
+maxiter = 200
+prec = 1.0e-06
+func_eval = 3e+04
+stds = 3.0
+Initial values : (s, alpha) = (0.08762, 6.661e+02)
+Initial step size (s, alpha) = (0.00876, 6.661e+01)
+
+---
+tvec = [0; 10; 20]
+bvec = [2000; 4000; 6000]
+nvec = [10000; 10000; 10000]
+
+Minimum found : (s, alpha) = (0.08927, 1.635e+04); -log L = 20.21
+Maximizing log-likelihood for s = 0 (fixed)
+alpha guess = 6.000e+00
+Minimum found : (s, alpha) = (0, 7.999e+01); -log L = 24.837
+
+
+STATUS = SUCCESS
+MLS = 0.08927
+MLALPHA = 1.635e+04
+MNLOGL = 20.21
+AIC2 = 44.419
+S0ALPHA = 7.999e+01
+S0NLOGL = 24.837
+AIC1 = 51.675
+LLR = 9.2554
+CHI2P = 2.4e-03
 
 ```
 
-## Installation
-Untar the archive into the desired directory:
-```
-  tar -zxf tsinfer.tar.gz
-```
-
-Compile required modules and the executable:
-```
-  make all
-```
-
-
-## Execution
+## Further details on using tsinfer
 Execution syntax is simple
 ```
   ./tsinfer infile [OPTIONS]
